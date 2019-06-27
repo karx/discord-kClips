@@ -138,7 +138,7 @@ client.on("message", async message => {
         //   .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
     }
 
-    if (command === "clip") {
+    if (command === "clipsFix" || command === "clipFix" || command === 'fixClip') {
         let headers = { 'Client-ID': config.twitch_clientID }
 
         const topGames = await request({
@@ -168,8 +168,7 @@ client.on("message", async message => {
             .setTitle(topClipOfAll['title'])
             .setAuthor(topClipOfAll['broadcaster_name'])
             .setColor(0x6441A5)
-            .setImage("http://i.imgur.com/yVpymuV.png")
-            // .setImage("" + topClipOfAll['thumbnail_url'])
+            .setImage("" + topClipOfAll['thumbnail_url'])
             .setThumbnail("" + topClipOfAll['thumbnail_url'])
             .setURL(topClipOfAll['embed_url'])
             .addField('Broadcaster', topClipOfAll['broadcaster_name'])
