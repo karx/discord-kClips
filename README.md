@@ -5,9 +5,14 @@
 ![][tag2-image]
 
 Using the new Twitch APIs, we pick up from the most viewed games and broadcaster, to pick a new clip for you everytime!
-Just use +clipsFix and get yourself fixed with a new Clip
+Just use __+clipsFix__ and get yourself fixed with a new Clip
 
 ![Header Image][header-image.png]
+
+## Usage
+Use any of the following command if kaaroClips is added to your server
+> +clipFix
+> +fixClips
 
 ## Footnote
 kaaro - Discord: `@karx#1041`

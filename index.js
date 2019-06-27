@@ -138,7 +138,7 @@ client.on("message", async message => {
         //   .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
     }
 
-    if (command === "clipsFix" || command === "clipFix" || command === 'fixClip') {
+    if (command === "clipsfix" || command === "clipfix" || command === "fixclip" || command === "fixclips") {
         let headers = { 'Client-ID': config.twitch_clientID }
 
         const topGames = await request({
