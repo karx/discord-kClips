@@ -12,6 +12,7 @@ Just use __+clipsFix__ and get yourself fixed with a new Clip
 ## Usage
 Use any of the following command if kaaroClips is added to your server
 > +clipFix
+
 > +fixClips
 
 ## Footnote
