@@ -2,7 +2,7 @@
 > A small Discord bot to get the best and the latest of Twitch Clips - On Demand.
 
 ![][tag-image]
-![][tag2-image]
+![kaarClips Bot](https://discordbots.org/api/widget/593919604993294337.svg)
 
 Using the new Twitch APIs, we pick up from the most viewed games and broadcaster, to pick a new clip for you everytime!
 Just use __+clipsFix__ and get yourself fixed with a new Clip
