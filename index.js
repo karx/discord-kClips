@@ -61,10 +61,35 @@ client.on("message", async message => {
         // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
         // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
         const m = await message.channel.send("Ping?");
-        m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+        m.edit(`Pong! I can get you Clips in  ${m.createdTimestamp - message.createdTimestamp}ms. Mehh.... plus minus ${Math.round(client.ping)}ms`);
     }
 
-    if (command === "say") {
+    if (command === "help" || command == "cmds" || command == "?" || command === "cmd") {
+        const embed = new Discord.RichEmbed()
+            .setTitle("`kaaroClips`")
+            // .setAuthor(topClipOfAll['broadcaster_name'])
+            .setColor(0x6441A5)
+            .setDescription(`
+                Using the new Twitch APIs, we pick up from the most viewed games and broadcaster, to pick a new clip for you everytime!
+                Just use __+clipsFix__ and get yourself fixed with a new Clip
+                
+                [Test - Link to add kaaroClips to your server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
+                    
+            `)
+            .addField('Usage', `
+            Use any of the following command if kaaroClips is added to your server
+            * clipsFix
+            * fixClips
+            `)
+            .addField('Contact Support', `
+            * Developer: @karx#1041 
+            * Support Server: https://discord.gg/B2cERQ5
+            `)
+
+            // .setImage("" + topClipOfAll['thumbnail_url'])
+            // .setThumbnail("" + topClipOfAll['thumbnail_url'])
+        message.channel.send({ embed });
+
         // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
         // // To get the "message" itself we join the `args` back into a string with spaces: 
         // const sayMessage = args.join(" ");
@@ -156,10 +181,6 @@ client.on("message", async message => {
             json: true,
         });
         console.log(topGames['top'].length);
-        // console.log(topGames['top'][getRandomInt(10)]);
-
-        // console.log(topClips)
-        // console.log(topClips['data'])
         console.log(topClips['data'].length)
         const topClipOfAll = topClips['data'][getRandomInt(20)]
         console.log(topClipOfAll['thumbnail_url'])
