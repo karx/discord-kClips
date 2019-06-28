@@ -78,8 +78,8 @@ client.on("message", async message => {
             `)
             .addField('Usage', `
             Use any of the following command if kaaroClips is added to your server
-            * clipsFix
-            * fixClips
+            * +clipsFix
+            * +fixClips
             `)
             .addField('Contact Support', `
             * Developer: @karx#1041 
