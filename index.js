@@ -167,7 +167,7 @@ client.on("message", async message => {
             embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         }
         console.log(embed_to_send);
-        m.edit(`Found this Clip of \`${embed_to_send.creator}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
         // message.channel.send(embed_to_send.url);
     }
 });
