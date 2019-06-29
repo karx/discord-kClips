@@ -158,6 +158,7 @@ client.on("message", async message => {
     }
 
     if (command === "clipsfix" || command === "clipfix" || command === "fixclip" || command === "fixclips") {
+        const m = await message.channel.send("Looking into the depths of Twitch.tv....");        
         var embed_to_send;
         if (args.length === 0){
             embed_to_send = await getRandomClipFromTwitch();
@@ -165,8 +166,9 @@ client.on("message", async message => {
             var streamer_name = args[0];
             embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         }
-
-        message.channel.send({ embed: embed_to_send });
+        console.log(embed_to_send);
+        m.edit(`Found this Clip of \`${embed_to_send.creator}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        // message.channel.send(embed_to_send.url);
     }
 });
 function getRandomInt(max) {
@@ -204,16 +206,34 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     }
     const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
     console.log(topClipOfAll['thumbnail_url'])
-    
+    console.log(topClipOfAll);
+    const gameDetails = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/games',
+        qs: {"id": topClipOfAll['game_id']},
+        headers: headers,
+        json: true
+    });
+    console.log(gameDetails);
+    var topGameName = gameDetails['data'][0]['name'];
+    const toReturn = {
+        game: topGameName,
+        streamer: topClipOfAll['broadcaster_name'],
+        creator: topClipOfAll['creator_name'],
+        url: topClipOfAll['url']
+    };
+    return toReturn;
+
     const embed = new Discord.RichEmbed()
-        .setTitle(topClipOfAll['title'])
-        .setAuthor(topClipOfAll['broadcaster_name'])
+        // .setTitle(topClipOfAll['title'])
+        // .setAuthor(topClipOfAll['broadcaster_name'])
         .setColor(0x6441A5)
-        .setImage("" + topClipOfAll['thumbnail_url'])
+        // .setImage("" + topClipOfAll['thumbnail_url'])
         .setThumbnail("" + topClipOfAll['thumbnail_url'])
-        .setURL(topClipOfAll['embed_url'])
+        .setURL(topClipOfAll['url'])
         .addField('Broadcaster', topClipOfAll['broadcaster_name'])
         .addField('Creator',topClipOfAll['creator_name']);
+    // return topClipOfAll['url'];
     return embed;
     // return "Test";
 }
@@ -228,28 +248,44 @@ async function getRandomClipFromTwitch() {
             headers: headers,
             json: true,
         });
+        console.log(topGames);
+        const countOfGames = topGames['top'].length;
+        var topGame = topGames['top'][getRandomInt(countOfGames)];
+        console.log(topGame);
+        var topGameId = topGame['game']['_id'];
+        var topGameName = topGame['game']['name'];
+        console.log(topGameId);
         const topClips = await request({
             method: 'get',
             url: 'https://api.twitch.tv/helix/clips',
-            qs: { "game_id": 32399 },
+            qs: { "game_id": topGameId },
             headers: headers,
             json: true,
         });
-        console.log(topGames['top'].length);
+        const countOfClips = topClips['data'].length;
         console.log(topClips['data'].length)
-        const topClipOfAll = topClips['data'][getRandomInt(20)]
+        const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
         console.log(topClipOfAll['thumbnail_url'])
         
+        const toReturn = {
+            game: topGameName,
+            streamer: topClipOfAll['broadcaster_name'],
+            creator: topClipOfAll['creator_name'],
+            url: topClipOfAll['url']
+        };
+        return toReturn;
+
         const embed = new Discord.RichEmbed()
-            .setTitle(topClipOfAll['title'])
-            .setAuthor(topClipOfAll['broadcaster_name'])
+            // .setTitle(topClipOfAll['title'])
+            // .setAuthor(topClipOfAll['broadcaster_name'])
             .setColor(0x6441A5)
-            .setImage("" + topClipOfAll['thumbnail_url'])
+            // .setImage("" + topClipOfAll['thumbnail_url'])
             .setThumbnail("" + topClipOfAll['thumbnail_url'])
-            .setURL(topClipOfAll['embed_url'])
+            .setURL(topClipOfAll['url'])
             .addField('Broadcaster', topClipOfAll['broadcaster_name'])
             .addField('Creator',topClipOfAll['creator_name']);
         return embed;
+        // return topClipOfAll['url'];
 }
 
 function getRichEmbedWithText(text) {
