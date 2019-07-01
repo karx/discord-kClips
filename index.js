@@ -3,37 +3,32 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 
-// Loading up request for some HTTP calls 
+// Loading up await request for some HTTP calls (lazy mode)
 const request = require("./await-request");
 
-// This is your client. Some people call it `bot`, some people call it `self`, 
-// some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
-// this is what we're refering to. Your client.
 const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
-// config.token contains the bot's token
-// config.prefix contains the message prefix.
 
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
-    client.user.setActivity(`Serving ${client.guilds.size} servers`);
+    client.user.setActivity(`clips in ${client.guilds.size} servers`);    
 });
 
 client.on("guildCreate", guild => {
     // This event triggers when the bot joins a guild.
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-    client.user.setActivity(`Serving ${client.guilds.size} servers`);
+    client.user.setActivity(`clips in ${client.guilds.size} servers`);
 });
 
 client.on("guildDelete", guild => {
     // this event triggers when the bot is removed from a guild.
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-    client.user.setActivity(`Serving ${client.guilds.size} servers`);
+    client.user.setActivity(`clips in ${client.guilds.size} servers`);
 });
 
 
@@ -164,7 +159,88 @@ client.on("message", async message => {
     }
 
     if (command === "clipsfix" || command === "clipfix" || command === "fixclip" || command === "fixclips") {
-        let headers = { 'Client-ID': config.twitch_clientID }
+        const m = await message.channel.send("Looking into the depths of Twitch.tv....");        
+        var embed_to_send;
+        if (args.length === 0){
+            embed_to_send = await getRandomClipFromTwitch();
+        } else {
+            var streamer_name = args[0];
+            embed_to_send = await getSteamerClipFromTwitch(streamer_name);
+        }
+        console.log(embed_to_send);
+        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        // message.channel.send(embed_to_send.url);
+    }
+});
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+async function getSteamerClipFromTwitch(broadcaster_name) {
+    // https://api.twitch.tv/helix/users
+    console.log(broadcaster_name);
+    let headers = { 'Client-ID': config.twitch_clientID }
+    var broadcaster_id;
+    const broadcaster = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/users',
+        qs: { 'login': broadcaster_name },
+        headers: headers,
+        json: true
+    });
+    if (broadcaster['data'].length > 0) {
+        broadcaster_id = broadcaster['data'][0].id;
+    } else {
+        return getRichEmbedWithText("Could not find any Twitch streamer with the name: `" + broadcaster_name + "`");
+    }
+    console.log(broadcaster);
+    const topClips = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/clips',
+        qs: { "broadcaster_id": broadcaster_id, "first": 50 },
+        headers: headers,
+        json: true,
+    });
+    const countOfClips = topClips['data'].length;
+    // console.log(topClips['data'].length)
+    if (countOfClips < 1) {
+        return getRichEmbedWithText("No clips have been created on " + broadcaster_name + "'s stream");
+    }
+    const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
+    console.log(topClipOfAll['thumbnail_url'])
+    console.log(topClipOfAll);
+    const gameDetails = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/games',
+        qs: {"id": topClipOfAll['game_id']},
+        headers: headers,
+        json: true
+    });
+    console.log(gameDetails);
+    var topGameName = gameDetails['data'][0]['name'];
+    const toReturn = {
+        game: topGameName,
+        streamer: topClipOfAll['broadcaster_name'],
+        creator: topClipOfAll['creator_name'],
+        url: topClipOfAll['url']
+    };
+    return toReturn;
+
+    const embed = new Discord.RichEmbed()
+        // .setTitle(topClipOfAll['title'])
+        // .setAuthor(topClipOfAll['broadcaster_name'])
+        .setColor(0x6441A5)
+        // .setImage("" + topClipOfAll['thumbnail_url'])
+        .setThumbnail("" + topClipOfAll['thumbnail_url'])
+        .setURL(topClipOfAll['url'])
+        .addField('Broadcaster', topClipOfAll['broadcaster_name'])
+        .addField('Creator',topClipOfAll['creator_name']);
+    // return topClipOfAll['url'];
+    return embed;
+    // return "Test";
+}
+
+async function getRandomClipFromTwitch() {
+    let headers = { 'Client-ID': config.twitch_clientID }
 
         const topGames = await request({
             method: 'get',
@@ -173,32 +249,50 @@ client.on("message", async message => {
             headers: headers,
             json: true,
         });
+        console.log(topGames);
+        const countOfGames = topGames['top'].length;
+        var topGame = topGames['top'][getRandomInt(countOfGames)];
+        console.log(topGame);
+        var topGameId = topGame['game']['_id'];
+        var topGameName = topGame['game']['name'];
+        console.log(topGameId);
         const topClips = await request({
             method: 'get',
             url: 'https://api.twitch.tv/helix/clips',
-            qs: { "game_id": 32399 },
+            qs: { "game_id": topGameId },
             headers: headers,
             json: true,
         });
-        console.log(topGames['top'].length);
+        const countOfClips = topClips['data'].length;
         console.log(topClips['data'].length)
-        const topClipOfAll = topClips['data'][getRandomInt(20)]
+        const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
         console.log(topClipOfAll['thumbnail_url'])
         
+        const toReturn = {
+            game: topGameName,
+            streamer: topClipOfAll['broadcaster_name'],
+            creator: topClipOfAll['creator_name'],
+            url: topClipOfAll['url']
+        };
+        return toReturn;
+
         const embed = new Discord.RichEmbed()
-            .setTitle(topClipOfAll['title'])
-            .setAuthor(topClipOfAll['broadcaster_name'])
+            // .setTitle(topClipOfAll['title'])
+            // .setAuthor(topClipOfAll['broadcaster_name'])
             .setColor(0x6441A5)
-            .setImage("" + topClipOfAll['thumbnail_url'])
+            // .setImage("" + topClipOfAll['thumbnail_url'])
             .setThumbnail("" + topClipOfAll['thumbnail_url'])
-            .setURL(topClipOfAll['embed_url'])
+            .setURL(topClipOfAll['url'])
             .addField('Broadcaster', topClipOfAll['broadcaster_name'])
-            .addField('Creator',topClipOfAll['creator_name'])
-        message.channel.send({ embed });
-    }
-});
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
+            .addField('Creator',topClipOfAll['creator_name']);
+        return embed;
+        // return topClipOfAll['url'];
+}
+
+function getRichEmbedWithText(text) {
+    return new Discord.RichEmbed()
+            .setTitle("kaaroClips - get your Twitch clips")
+            .setDescription(text);
 }
 
 client.login(config.token);
