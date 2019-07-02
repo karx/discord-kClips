@@ -171,6 +171,45 @@ client.on("message", async message => {
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
         // message.channel.send(embed_to_send.url);
     }
+
+    if (command === "jimbo") {
+        var messageList = [
+            "Does jimbo ever eat carbs?..",
+            "Image jeemzz studing ...",
+            "How is jeemzz always on a bike?..",
+            "Jeemzz loves oreos i guess..."
+        ];
+
+        var msgToSend = messageList[getRandomInt(messageList.length)];
+
+        const m = await message.channel.send(msgToSend);        
+        var embed_to_send;
+        var streamer_name = "jeemzz"
+        embed_to_send = await getSteamerClipFromTwitch(streamer_name);
+        
+        console.log(embed_to_send);
+        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        
+    }
+    if (command === "ibigasm") {
+        var messageList = [
+            "ibi got liquid blood..",
+            "ibi is very honest to be honest.",
+            "ibi finds pubg od.",
+            "ibi can hear your soul living behind walls."
+        ];
+
+        var msgToSend = messageList[getRandomInt(messageList.length)];
+
+        const m = await message.channel.send(msgToSend);        
+        var embed_to_send;
+        var streamer_name = "ibiza"
+        embed_to_send = await getSteamerClipFromTwitch(streamer_name);
+        
+        console.log(embed_to_send);
+        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        
+    }
 });
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
