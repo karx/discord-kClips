@@ -14,6 +14,7 @@ const config = require("./config.json");
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+    post_log_message('OnReady', `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
     client.user.setActivity(`clips in ${client.guilds.size} servers`);    
@@ -22,12 +23,14 @@ client.on("ready", () => {
 client.on("guildCreate", guild => {
     // This event triggers when the bot joins a guild.
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+    post_log_message("guildCreate", `New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
     client.user.setActivity(`clips in ${client.guilds.size} servers`);
 });
 
 client.on("guildDelete", guild => {
     // this event triggers when the bot is removed from a guild.
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
+    post_log_message('guildDelete', `I have been removed from: ${guild.name} (id: ${guild.id})`);
     client.user.setActivity(`clips in ${client.guilds.size} servers`);
 });
 
@@ -60,6 +63,7 @@ client.on("message", async message => {
     }
 
     if (command === "help" || command == "cmds" || command == "?" || command === "cmd") {
+        
         const embed = new Discord.RichEmbed()
             .setTitle("`kaaroClips`")
             // .setAuthor(topClipOfAll['broadcaster_name'])
@@ -167,6 +171,7 @@ client.on("message", async message => {
             var streamer_name = args[0];
             embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         }
+        post_log_message('clipFix command', embed_to_send);
         console.log(embed_to_send);
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
         // message.channel.send(embed_to_send.url);
@@ -186,8 +191,7 @@ client.on("message", async message => {
         var embed_to_send;
         var streamer_name = "jeemzz"
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
-        
-        console.log(embed_to_send);
+        post_log_message('jimbo command', embed_to_send);
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
         
     }
@@ -206,7 +210,7 @@ client.on("message", async message => {
         var streamer_name = "ibiza"
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         
-        console.log(embed_to_send);
+        post_log_message('ibigasm command', embed_to_send);
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
         
     }
@@ -335,3 +339,24 @@ function getRichEmbedWithText(text) {
 }
 
 client.login(config.token);
+
+async function post_log_message(title, desc) {
+    let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    console.log('------------------');
+    var msg = await request({
+        method: 'post',
+        url: config.discord_webhook,
+        form : JSON.stringify({ 
+            "content" : "discord-kClips", 
+            "embeds" : [{
+                "title" : title,
+                "description" : JSON.stringify(desc)
+            }]
+        }),
+        headers: headers
+        // json: true
+    });
+    console.log(msg);
+    console.log('------------------');
+}
+
