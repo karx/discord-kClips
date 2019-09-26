@@ -287,7 +287,7 @@ async function getRandomClipFromTwitch() {
 
         const topGames = await request({
             method: 'get',
-            url: 'https://api.twitch.tv/kraken/games/top',
+            url: 'https://api.twitch.tv/helix/games/top',
             params: { limit: 20 },
             headers: headers,
             json: true,
