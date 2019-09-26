@@ -293,9 +293,10 @@ async function getRandomClipFromTwitch() {
             json: true,
         });
         console.log(topGames);
-        const countOfGames = topGames['top'].length;
-        var topGame = topGames['top'][getRandomInt(countOfGames)];
+        const countOfGames = topGames['data'].length;
+        var topGame = topGames['data'][getRandomInt(countOfGames)];
         console.log(topGame);
+        
         var topGameId = topGame['game']['_id'];
         var topGameName = topGame['game']['name'];
         console.log(topGameId);
