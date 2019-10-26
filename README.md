@@ -7,6 +7,8 @@ Using the new Twitch APIs, we pick up from the most viewed games and broadcaster
 Just use __+clipsFix__ and get yourself fixed with a new Clip
 
 [Add to server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
+
+
 ![Header Image][header-image.png]
 
 ## Usage
