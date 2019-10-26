@@ -6,7 +6,7 @@
 Using the new Twitch APIs, we pick up from the most viewed games and broadcaster, to pick a new clip for you everytime!
 Just use __+clipsFix__ and get yourself fixed with a new Clip
 
-[Test - Link to add kaaroClips to your server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
+[Add to server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
 ![Header Image][header-image.png]
 
 ## Usage
@@ -14,6 +14,8 @@ Use any of the following command if kaaroClips is added to your server
 > +clipsFix
 
 > +fixClips
+
+[Add to server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
 
 ## Footnote
 kaaro - Discord: `@karx#1041`
