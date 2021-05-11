@@ -1,5 +1,4 @@
 
-const config = require("./config.json");
 const request = require("./await-request");
 let hasToken = false;
 function getRandomInt(max) {
@@ -17,7 +16,7 @@ async function getAccessTokenFromTwitch() {
         const oauthRequest = await request({
             method: 'post',
             url: 'https://id.twitch.tv/oauth2/token',
-            qs: { 'client_id': config.twitch_clientID, 'client_secret': config.twitch_secret, 'grant_type': 'client_credentials', 'scope': '' },
+            qs: { 'client_id': process.env.twitch_clientID, 'client_secret': process.env.twitch_secret, 'grant_type': 'client_credentials', 'scope': '' },
             json: true
         });
         hasToken = oauthRequest.access_token
@@ -29,7 +28,7 @@ async function getAccessTokenFromTwitch() {
 async function getSteamerClipFromTwitch(broadcaster_name) {
     // https://api.twitch.tv/helix/users
     console.log(broadcaster_name);
-    let headers = { 'Client-ID': config.twitch_clientID }
+    let headers = { 'Client-ID': process.env.twitch_clientID }
     var broadcaster_id;
     const broadcaster = await request({
         method: 'get',
@@ -93,7 +92,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
 async function getRandomClipFromTwitch() {
     let twitch_access_code = await getAccessTokenFromTwitch();
     // console.log({twitch_access_code});
-    let headers = { 'Client-ID': config.twitch_clientID, 'Authorization': 'Bearer ' + twitch_access_code }
+    let headers = { 'Client-ID': process.env.twitch_clientID, 'Authorization': 'Bearer ' + twitch_access_code }
 
     const topGames = await request({
         method: 'get',

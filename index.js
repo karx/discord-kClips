@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 
 // Load up the discord.js library
 const Discord = require("discord.js");
@@ -7,10 +7,6 @@ const Discord = require("discord.js");
 const request = require("./await-request");
 
 const client = new Discord.Client();
-
-// Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
-
 
 const { getSteamerClipFromTwitch, getRandomClipFromTwitch } = require("./twitch-clips");
 
@@ -48,13 +44,13 @@ client.on("message", async message => {
 
     // Also good practice to ignore any message that does not start with our prefix, 
     // which is set in the configuration file.
-    if (message.content.indexOf(config.prefix) !== 0) return;
+    if (message.content.indexOf(process.env.prefix) !== 0) return;
 
     // Here we separate our "command" name, and our "arguments" for the command. 
     // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
     // command = say
     // args = ["Is", "this", "the", "real", "life?"]
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const args = message.content.slice(process.env.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
     // Let's go with a few common example commands! Feel free to delete or change those.
@@ -224,14 +220,14 @@ function getRandomInt(max) {
 }
 
 
-client.login(config.token);
+client.login(process.env.token);
 
 async function post_log_message(title, desc, url = "https://akriya.co.in") {
     let headers = { 'Content-Type': 'application/json' };
     console.log('------------------');
     var msg = await request({
         method: 'post',
-        url: config.discord_webhook,
+        url: process.env.discord_webhook,
         body: JSON.stringify({
             "content": "discord-kClips",
             "embeds": [{
