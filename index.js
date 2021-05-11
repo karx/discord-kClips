@@ -15,12 +15,13 @@ const config = require("./config.json");
 const { getSteamerClipFromTwitch, getRandomClipFromTwitch } = require("./twitch-clips");
 
 client.on("ready", () => {
+    // console.log({ client })
     // This event will run if the bot starts, and logs in, successfully.
-    console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
-    post_log_message('OnReady', `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+    console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
+    post_log_message('OnReady', `Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
-    client.user.setActivity(`clips in ${client.guilds.size} servers`);    
+    client.user.setActivity(`clips in ${client.guilds.cache.size} servers`);
 });
 
 client.on("guildCreate", guild => {
@@ -66,7 +67,7 @@ client.on("message", async message => {
     }
 
     if (command === "help" || command == "cmds" || command == "?" || command === "cmd") {
-        
+
         const embed = new Discord.RichEmbed()
             .setTitle("`kaaroClips`")
             // .setAuthor(topClipOfAll['broadcaster_name'])
@@ -88,8 +89,8 @@ client.on("message", async message => {
             * Support Server: https://discord.gg/B2cERQ5
             `)
 
-            // .setImage("" + topClipOfAll['thumbnail_url'])
-            // .setThumbnail("" + topClipOfAll['thumbnail_url'])
+        // .setImage("" + topClipOfAll['thumbnail_url'])
+        // .setThumbnail("" + topClipOfAll['thumbnail_url'])
         message.channel.send({ embed });
 
         // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
@@ -166,9 +167,9 @@ client.on("message", async message => {
     }
 
     if (command === "clipsfix" || command === "clipfix" || command === "fixclip" || command === "fixclips") {
-        const m = await message.channel.send("Looking into the depths of Twitch.tv....");        
+        const m = await message.channel.send("Looking into the depths of Twitch.tv....");
         var embed_to_send;
-        if (args.length === 0){
+        if (args.length === 0) {
             embed_to_send = await getRandomClipFromTwitch();
         } else {
             var streamer_name = args[0];
@@ -190,13 +191,13 @@ client.on("message", async message => {
 
         var msgToSend = messageList[getRandomInt(messageList.length)];
 
-        const m = await message.channel.send(msgToSend);        
+        const m = await message.channel.send(msgToSend);
         var embed_to_send;
         var streamer_name = "jeemzz"
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         post_log_message('jimbo command', embed_to_send);
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
-        
+
     }
     if (command === "ibigasm") {
         var messageList = [
@@ -208,14 +209,14 @@ client.on("message", async message => {
 
         var msgToSend = messageList[getRandomInt(messageList.length)];
 
-        const m = await message.channel.send(msgToSend);        
+        const m = await message.channel.send(msgToSend);
         var embed_to_send;
         var streamer_name = "ibiza"
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
-        
+
         post_log_message('ibigasm command', embed_to_send);
         m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
-        
+
     }
 });
 function getRandomInt(max) {
@@ -225,17 +226,18 @@ function getRandomInt(max) {
 
 client.login(config.token);
 
-async function post_log_message(title, desc) {
-    let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+async function post_log_message(title, desc, url = "https://akriya.co.in") {
+    let headers = { 'Content-Type': 'application/json' };
     console.log('------------------');
     var msg = await request({
         method: 'post',
         url: config.discord_webhook,
-        form : JSON.stringify({ 
-            "content" : "discord-kClips", 
-            "embeds" : [{
-                "title" : title,
-                "description" : JSON.stringify(desc)
+        body: JSON.stringify({
+            "content": "discord-kClips",
+            "embeds": [{
+                "title": title,
+                "description": JSON.stringify(desc),
+                "url": url
             }]
         }),
         headers: headers

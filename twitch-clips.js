@@ -9,21 +9,21 @@ function getRandomInt(max) {
 
 function getRichEmbedWithText(text) {
     return new Discord.RichEmbed()
-            .setTitle("kaaroClips - get your Twitch clips")
-            .setDescription(text);
+        .setTitle("kaaroClips - get your Twitch clips")
+        .setDescription(text);
 }
 async function getAccessTokenFromTwitch() {
     if (!hasToken) {
         const oauthRequest = await request({
             method: 'post',
             url: 'https://id.twitch.tv/oauth2/token',
-            qs: { 'client_id': config.twitch_clientID, 'client_secret': config.twitch_secret, 'grant_type':'client_credentials', 'scope':'' },
+            qs: { 'client_id': config.twitch_clientID, 'client_secret': config.twitch_secret, 'grant_type': 'client_credentials', 'scope': '' },
             json: true
         });
         hasToken = oauthRequest.access_token
         return oauthRequest.access_token;
     } else return hasToken;
-    
+
 }
 
 async function getSteamerClipFromTwitch(broadcaster_name) {
@@ -62,7 +62,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     const gameDetails = await request({
         method: 'get',
         url: 'https://api.twitch.tv/helix/games',
-        qs: {"id": topClipOfAll['game_id']},
+        qs: { "id": topClipOfAll['game_id'] },
         headers: headers,
         json: true
     });
@@ -84,7 +84,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
         .setThumbnail("" + topClipOfAll['thumbnail_url'])
         .setURL(topClipOfAll['url'])
         .addField('Broadcaster', topClipOfAll['broadcaster_name'])
-        .addField('Creator',topClipOfAll['creator_name']);
+        .addField('Creator', topClipOfAll['creator_name']);
     // return topClipOfAll['url'];
     return embed;
     // return "Test";
@@ -93,41 +93,41 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
 async function getRandomClipFromTwitch() {
     let twitch_access_code = await getAccessTokenFromTwitch();
     // console.log({twitch_access_code});
-    let headers = { 'Client-ID': config.twitch_clientID, 'Authorization': 'Bearer ' +  twitch_access_code}
+    let headers = { 'Client-ID': config.twitch_clientID, 'Authorization': 'Bearer ' + twitch_access_code }
 
-        const topGames = await request({
-            method: 'get',
-            url: 'https://api.twitch.tv/helix/games/top',
-            params: { limit: 20 },
-            headers: headers,
-            json: true,
-        });
-        // console.log("from Twitch:" ,topGames);
-        const countOfGames = topGames['data'].length;
-        var topGame = topGames['data'][getRandomInt(countOfGames)];
-        console.log("Random top Game of Run: " , topGame);
-        var topGameId = topGame['id'];
-        var topGameName = topGame['name'];
-        // console.log(topGameId);
-        const topClips = await request({
-            method: 'get',
-            url: 'https://api.twitch.tv/helix/clips',
-            qs: { "game_id": topGameId },
-            headers: headers,
-            json: true,
-        });
-        const countOfClips = topClips['data'].length;
-        console.log(topClips['data'].length)
-        const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
-        console.log(topClipOfAll['thumbnail_url'])
-        
-        const toReturn = {
-            game: topGameName,
-            streamer: topClipOfAll['broadcaster_name'],
-            creator: topClipOfAll['creator_name'],
-            url: topClipOfAll['url']
-        };
-        return toReturn;
+    const topGames = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/games/top',
+        params: { limit: 20 },
+        headers: headers,
+        json: true,
+    });
+    console.log("from Twitch:", topGames);
+    const countOfGames = topGames['data'].length;
+    var topGame = topGames['data'][getRandomInt(countOfGames)];
+    console.log("Random top Game of Run: ", topGame);
+    var topGameId = topGame['id'];
+    var topGameName = topGame['name'];
+    // console.log(topGameId);
+    const topClips = await request({
+        method: 'get',
+        url: 'https://api.twitch.tv/helix/clips',
+        qs: { "game_id": topGameId },
+        headers: headers,
+        json: true,
+    });
+    const countOfClips = topClips['data'].length;
+    console.log(topClips['data'].length)
+    const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
+    console.log(topClipOfAll['thumbnail_url'])
+
+    const toReturn = {
+        game: topGameName,
+        streamer: topClipOfAll['broadcaster_name'],
+        creator: topClipOfAll['creator_name'],
+        url: topClipOfAll['url']
+    };
+    return toReturn;
 
 }
 
