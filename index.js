@@ -192,7 +192,7 @@ client.on("message", async message => {
             var query = args[0];
             embed_to_send = await getSearchClipFromTwitch(query);
         }
-        post_log_message('clipFix command', embed_to_send);
+        post_log_message('searchclip command', embed_to_send);
         console.log(embed_to_send);
         if (!!embed_to_send.url) {
             m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
