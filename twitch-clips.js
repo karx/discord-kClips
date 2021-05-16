@@ -28,7 +28,9 @@ async function getAccessTokenFromTwitch() {
 async function getSteamerClipFromTwitch(broadcaster_name) {
     // https://api.twitch.tv/helix/users
     console.log(broadcaster_name);
-    let headers = { 'Client-ID': process.env.twitch_clientID }
+    let twitch_access_code = await getAccessTokenFromTwitch();
+    let headers = { 'Client-ID': process.env.twitch_clientID, 'Authorization': 'Bearer ' + twitch_access_code }
+
     var broadcaster_id;
     const broadcaster = await request({
         method: 'get',
@@ -37,12 +39,12 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
         headers: headers,
         json: true
     });
+    console.log(broadcaster);
     if (broadcaster['data'].length > 0) {
         broadcaster_id = broadcaster['data'][0].id;
     } else {
         return getRichEmbedWithText("Could not find any Twitch streamer with the name: `" + broadcaster_name + "`");
     }
-    console.log(broadcaster);
     const topClips = await request({
         method: 'get',
         url: 'https://api.twitch.tv/helix/clips',
