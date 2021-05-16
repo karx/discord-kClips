@@ -30,7 +30,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     } else {
         return getMessageEmbedWithText("Could not find any Twitch streamer with the name: `" + broadcaster_name + "`");
     }
-    const topClips = twitch_getClipsfromBroadcasterID(broadcaster_id);
+    const topClips = await twitch_getClipsfromBroadcasterID(broadcaster_id);
     const countOfClips = topClips['data'].length;
 
     if (countOfClips < 1) {
