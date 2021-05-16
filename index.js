@@ -8,7 +8,7 @@ const request = require("./await-request");
 
 const client = new Discord.Client();
 
-const { getSteamerClipFromTwitch, getRandomClipFromTwitch } = require("./twitch-clips");
+const { getSteamerClipFromTwitch, getRandomClipFromTwitch, getSearchClipFromTwitch } = require("./twitch-clips");
 
 client.on("ready", () => {
     // console.log({ client })
@@ -64,7 +64,7 @@ client.on("message", async message => {
 
     if (command === "help" || command == "cmds" || command == "?" || command === "cmd") {
 
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
             .setTitle("`kaaroClips`")
             // .setAuthor(topClipOfAll['broadcaster_name'])
             .setColor(0x6441A5)
@@ -72,13 +72,15 @@ client.on("message", async message => {
                 Using the new Twitch APIs, we pick up from the most viewed games and broadcaster, to pick a new clip for you everytime!
                 Just use __+clipsFix__ and get yourself fixed with a new Clip
                 
-                [Test - Link to add kaaroClips to your server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
+                [Link to add kaaroClips to your own server](https://discordapp.com/api/oauth2/authorize?client_id=593919604993294337&permissions=0&scope=bot)
                     
             `)
             .addField('Usage', `
             Use any of the following command if kaaroClips is added to your server
             * +clipsFix
             * +fixClips
+            * +fixClips <streamerName>
+            * +searchClip <query>
             `)
             .addField('Contact Support', `
             * Developer: @karx#1041 
@@ -170,6 +172,25 @@ client.on("message", async message => {
         } else {
             var streamer_name = args[0];
             embed_to_send = await getSteamerClipFromTwitch(streamer_name);
+        }
+        post_log_message('clipFix command', embed_to_send);
+        console.log(embed_to_send);
+        if (!!embed_to_send.url) {
+            m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        } else {
+            m.edit(embed_to_send);
+        }
+
+        // message.channel.send(embed_to_send.url);
+    }
+    if (command === "searchclip" || command === "clipsearch" || command === "clipit" || command === "pjclip") {
+        const m = await message.channel.send("Looking into the depths of Twitch.tv....");
+        var embed_to_send;
+        if (args.length === 0) {
+            embed_to_send = await getRandomClipFromTwitch();
+        } else {
+            var query = args[0];
+            embed_to_send = await getSearchClipFromTwitch(query);
         }
         post_log_message('clipFix command', embed_to_send);
         console.log(embed_to_send);
