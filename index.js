@@ -173,7 +173,12 @@ client.on("message", async message => {
         }
         post_log_message('clipFix command', embed_to_send);
         console.log(embed_to_send);
-        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        if (!!embed_to_send.url) {
+            m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        } else {
+            m.edit(embed_to_send);
+        }
+
         // message.channel.send(embed_to_send.url);
     }
 
@@ -192,7 +197,12 @@ client.on("message", async message => {
         var streamer_name = "jeemzz"
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
         post_log_message('jimbo command', embed_to_send);
-        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        if (!!embed_to_send.url) {
+            m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        } else {
+            m.edit(embed_to_send);
+        }
+
 
     }
     if (command === "ibigasm") {
@@ -211,7 +221,11 @@ client.on("message", async message => {
         embed_to_send = await getSteamerClipFromTwitch(streamer_name);
 
         post_log_message('ibigasm command', embed_to_send);
-        m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        if (!!embed_to_send.url) {
+            m.edit(`Found this Clip of \`${embed_to_send.streamer}\` playing \`${embed_to_send.game}\` \n${embed_to_send.url}`);
+        } else {
+            m.edit(embed_to_send);
+        }
 
     }
 });

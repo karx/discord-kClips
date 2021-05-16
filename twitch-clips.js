@@ -1,15 +1,19 @@
 
 const request = require("./await-request");
+const Discord = require("discord.js");
+
 let hasToken = false;
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
 
-function getRichEmbedWithText(text) {
-    return new Discord.RichEmbed()
+function getMessageEmbedWithText(text) {
+    const embed = new Discord.MessageEmbed()
         .setTitle("kaaroClips - get your Twitch clips")
         .setDescription(text);
+
+    return embed;
 }
 async function getAccessTokenFromTwitch() {
     if (!hasToken) {
@@ -43,7 +47,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     if (broadcaster['data'].length > 0) {
         broadcaster_id = broadcaster['data'][0].id;
     } else {
-        return getRichEmbedWithText("Could not find any Twitch streamer with the name: `" + broadcaster_name + "`");
+        return getMessageEmbedWithText("Could not find any Twitch streamer with the name: `" + broadcaster_name + "`");
     }
     const topClips = await request({
         method: 'get',
@@ -55,7 +59,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     const countOfClips = topClips['data'].length;
     // console.log(topClips['data'].length)
     if (countOfClips < 1) {
-        return getRichEmbedWithText("No clips have been created on " + broadcaster_name + "'s stream");
+        return getMessageEmbedWithText("No clips have been created on " + broadcaster_name + "'s stream");
     }
     const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
     console.log(topClipOfAll['thumbnail_url'])
@@ -77,7 +81,7 @@ async function getSteamerClipFromTwitch(broadcaster_name) {
     };
     return toReturn;
 
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
         // .setTitle(topClipOfAll['title'])
         // .setAuthor(topClipOfAll['broadcaster_name'])
         .setColor(0x6441A5)
