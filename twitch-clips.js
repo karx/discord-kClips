@@ -55,10 +55,10 @@ async function getRandomClipFromTwitch() {
     var topGame = topGames['data'][getRandomInt(countOfGames)];
     var topGameId = topGame['id'];
     var topGameName = topGame['name'];
-    const topClips = await twitch_getTopGames(topGameId);
+    const topClips = await twitch_getClipsfromGameID(topGameId);
     const countOfClips = topClips['data'].length;
     const topClipOfAll = topClips['data'][getRandomInt(countOfClips)]
-
+    console.log({ topClips, topClipOfAll });
     const toReturn = {
         game: topGameName,
         streamer: topClipOfAll['broadcaster_name'],
